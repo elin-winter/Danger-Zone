@@ -6,13 +6,13 @@ class Empleado {
 
   const habilidades
   var cantSalud
-  const subordinados
+
   var tipoEmpleado
 
   // ---------- Metodos
 
   // Accesors
-  
+
   method tipoEmpleado(nuevoTipo) {
     tipoEmpleado = nuevoTipo
   }
@@ -21,7 +21,7 @@ class Empleado {
 
   // Controles
 
-  method esJefe() = !subordinados.isEmpty()
+
 
   method estaIncapacitado() = cantSalud < tipoEmpleado.saludCritica()
 
@@ -29,7 +29,7 @@ class Empleado {
     !self.estaIncapacitado() and self.poseeHabilidad(habilidad)
 
   method poseeHabilidad(habilidad) = 
-    habilidades.contains(habilidad) or subordinados.any({x => x.poseeHabilidad(habilidad)})
+    habilidades.contains(habilidad)
 
   method puedeRealizar(mision) = 
     mision.habilidadesReqs().forEach({x => self.puedeUsar(x)})
@@ -45,6 +45,17 @@ class Empleado {
   }
 
   method registrarMision(mision) = tipoEmpleado.misionTerminada(mision, self)
+}
+
+class Jefe inherits Empleado {
+  const subordinados
+
+  override method poseeHabilidad(habilidad) =
+    super(habilidad) or self.algunSubordinadoPosee(habilidad)
+
+  method algunSubordinadoPosee(habilidad) =
+    subordinados.any({x => x.poseeHabilidad(habilidad)})
+
 }
 
 // -------- Tipos de Empleados
